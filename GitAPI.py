@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 class GitHubAPI:
     BASE_URL = 'https://api.github.com'
@@ -43,14 +43,29 @@ class GitHubAPI:
         endpoint = f'/users/{username}/repos'
         return self._make_request(endpoint)
 
-# Пример использования:
+    def save_to_json(self, data, filename):
+        """
+        Сохраняет данные в JSON-файл.
+        """
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            print(f"Данные успешно сохранены в файл {filename}")
+        except IOError as e:
+            print(f"Ошибка при сохранении файла: {e}")
+
+    # Пример использования:
 if __name__ == '__main__':
     gh = GitHubAPI()
 
     user_info = gh.get_user_info("podolskiy06021990-bit")
     if user_info:
         print(f"Пользователь: {user_info['login']}, Имя: {user_info.get('name', 'не указано')}")
+        gh.save_to_json(user_info, 'user_podolskiy06021990-bit.json')
 
     repo_info = gh.get_repo_info("podolskiy06021990-bit", "Python_database_orm")
     if repo_info:
         print(f"Репозиторий: {repo_info['name']}, Описание: {repo_info.get('description', 'нет описания')}")
+        gh.save_to_json(repo_info, 'repo_Python_database_orm.json')
+
+#
